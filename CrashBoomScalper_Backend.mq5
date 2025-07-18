@@ -193,16 +193,16 @@ void OnTick()
 bool TestBackendConnection()
 {
    string url = InpBackendURL + "/health";
-   char post[], result[];
+   uchar post[], result[];
    string headers = "Content-Type: application/json\r\n";
+   string response;
    
    StringToCharArray(headers, post);
    
-   int res = WebRequest("GET", url, post, result, InpBackendTimeout * 1000);
+   int res = WebRequest("GET", url, headers, InpBackendTimeout * 1000, post, result, response);
    
    if(res == 200)
    {
-      string response = CharArrayToString(result);
       Print("Backend health check successful: ", response);
       return true;
    }
@@ -229,25 +229,22 @@ void RequestBackendAnalysis()
    //--- Prepare request data
    string requestData = "{";
    requestData += "\"symbol\":\"" + _Symbol + "\",";
-   requestData += "\"price_data\":" + priceData + ",";
-   requestData += "\"market_info\":{";
-   requestData += "\"spread\":" + DoubleToString(SymbolInfoInteger(_Symbol, SYMBOL_SPREAD), 0) + ",";
-   requestData += "\"volatility\":" + DoubleToString(SymbolInfoDouble(_Symbol, SYMBOL_VOLATILITY), 2);
-   requestData += "}";
+   requestData += "\"prices\":" + priceData + ",";
+   requestData += "\"timeframe\":\"1m\"";
    requestData += "}";
    
    //--- Send request to backend
    string url = InpBackendURL + "/analyze";
-   char post[], result[];
+   uchar post[], result[];
    string headers = "Content-Type: application/json\r\n";
+   string response;
    
    StringToCharArray(headers + requestData, post);
    
-   int res = WebRequest("POST", url, post, result, InpBackendTimeout * 1000);
+   int res = WebRequest("POST", url, headers, InpBackendTimeout * 1000, post, result, response);
    
    if(res == 200)
    {
-      string response = CharArrayToString(result);
       if(ParseBackendResponse(response))
       {
          Print("Backend analysis completed successfully");
@@ -293,17 +290,11 @@ string CollectPriceData()
       return "";
    }
    
-   string priceData = "[";
+   priceData = "[";
    for(int i = bars - 1; i >= 0; i--)
    {
       if(i < bars - 1) priceData += ",";
-      priceData += "{";
-      priceData += "\"timestamp\":\"" + TimeToString(time[i], TIME_DATE|TIME_SECONDS) + "\",";
-      priceData += "\"open\":" + DoubleToString(open[i], _Digits) + ",";
-      priceData += "\"high\":" + DoubleToString(high[i], _Digits) + ",";
-      priceData += "\"low\":" + DoubleToString(low[i], _Digits) + ",";
-      priceData += "\"close\":" + DoubleToString(close[i], _Digits);
-      priceData += "}";
+      priceData += DoubleToString(close[i], _Digits);
    }
    priceData += "]";
    
@@ -315,7 +306,7 @@ string CollectPriceData()
 //+------------------------------------------------------------------+
 bool ParseBackendResponse(string response)
 {
-   //--- Extract JSON values (simplified parsing)
+   //--- Extract JSON values from recommendations object
    currentRecommendation.spikeThreshold = ExtractDoubleFromJson(response, "spike_threshold");
    currentRecommendation.cooldownSeconds = (int)ExtractDoubleFromJson(response, "cooldown_seconds");
    currentRecommendation.stopLossPips = ExtractDoubleFromJson(response, "stop_loss_pips");
@@ -325,6 +316,19 @@ bool ParseBackendResponse(string response)
    currentRecommendation.marketTrend = ExtractStringFromJson(response, "market_trend");
    currentRecommendation.reasoning = ExtractStringFromJson(response, "reasoning");
    currentRecommendation.timestamp = TimeCurrent();
+   
+   //--- If no values found, try recommendations object
+   if(currentRecommendation.spikeThreshold == 0)
+   {
+      currentRecommendation.spikeThreshold = ExtractDoubleFromJson(response, "recommendations", "spike_threshold");
+      currentRecommendation.cooldownSeconds = (int)ExtractDoubleFromJson(response, "recommendations", "cooldown_seconds");
+      currentRecommendation.stopLossPips = ExtractDoubleFromJson(response, "recommendations", "stop_loss_pips");
+      currentRecommendation.takeProfitPips = ExtractDoubleFromJson(response, "recommendations", "take_profit_pips");
+      currentRecommendation.riskScore = ExtractDoubleFromJson(response, "recommendations", "risk_score");
+      currentRecommendation.confidence = ExtractDoubleFromJson(response, "recommendations", "confidence");
+      currentRecommendation.marketTrend = ExtractStringFromJson(response, "recommendations", "market_trend");
+      currentRecommendation.reasoning = ExtractStringFromJson(response, "recommendations", "reasoning");
+   }
    
    return currentRecommendation.spikeThreshold > 0;
 }
@@ -365,6 +369,49 @@ double ExtractDoubleFromJson(string json, string key)
 }
 
 //+------------------------------------------------------------------+
+//| Extract double value from nested JSON                            |
+//+------------------------------------------------------------------+
+double ExtractDoubleFromJson(string json, string parent, string key)
+{
+   string searchStr = "\"" + parent + "\":{";
+   int pos = StringFind(json, searchStr);
+   if(pos == -1)
+      return 0.0;
+   
+   pos += StringLen(searchStr);
+   
+   //--- Find the key within the parent object
+   string nestedSearchStr = "\"" + key + "\":";
+   int nestedPos = StringFind(json, nestedSearchStr, pos);
+   if(nestedPos == -1)
+      return 0.0;
+   
+   nestedPos += StringLen(nestedSearchStr);
+   
+   //--- Skip whitespace
+   while(nestedPos < StringLen(json) && (StringGetCharacter(json, nestedPos) == ' ' || StringGetCharacter(json, nestedPos) == '\t'))
+      nestedPos++;
+   
+   //--- Find end of number
+   int endPos = nestedPos;
+   while(endPos < StringLen(json))
+   {
+      ushort ch = StringGetCharacter(json, endPos);
+      if(ch != '.' && ch != '-' && (ch < '0' || ch > '9'))
+         break;
+      endPos++;
+   }
+   
+   if(endPos > nestedPos)
+   {
+      string numStr = StringSubstr(json, nestedPos, endPos - nestedPos);
+      return StringToDouble(numStr);
+   }
+   
+   return 0.0;
+}
+
+//+------------------------------------------------------------------+
 //| Extract string value from JSON                                   |
 //+------------------------------------------------------------------+
 string ExtractStringFromJson(string json, string key)
@@ -380,6 +427,35 @@ string ExtractStringFromJson(string json, string key)
    if(endPos > pos)
    {
       return StringSubstr(json, pos, endPos - pos);
+   }
+   
+   return "";
+}
+
+//+------------------------------------------------------------------+
+//| Extract string value from nested JSON                            |
+//+------------------------------------------------------------------+
+string ExtractStringFromJson(string json, string parent, string key)
+{
+   string searchStr = "\"" + parent + "\":{";
+   int pos = StringFind(json, searchStr);
+   if(pos == -1)
+      return "";
+   
+   pos += StringLen(searchStr);
+   
+   //--- Find the key within the parent object
+   string nestedSearchStr = "\"" + key + "\":\"";
+   int nestedPos = StringFind(json, nestedSearchStr, pos);
+   if(nestedPos == -1)
+      return "";
+   
+   nestedPos += StringLen(nestedSearchStr);
+   int endPos = StringFind(json, "\"", nestedPos);
+   
+   if(endPos > nestedPos)
+   {
+      return StringSubstr(json, nestedPos, endPos - nestedPos);
    }
    
    return "";
