@@ -19,6 +19,7 @@ input string   InpBackendURL = "https://forex-bot-ffiu.onrender.com";     // Bac
 input int      InpBackendTimeout = 15;                      // Request timeout (seconds)
 input bool     InpUseBackendAI = true;                      // Use Backend AI Analysis
 input int      InpAnalysisInterval = 1800;                  // Analysis interval (seconds)
+input bool     InpSimulateBackendInTester = true;           // Simulate backend in Strategy Tester
 
 input group "=== TRADING PARAMETERS ==="
 input double   InpLotSize = 0.01;                           // Lot Size
@@ -114,7 +115,26 @@ int OnInit()
    //--- Test backend connection
    if(InpUseBackendAI)
    {
-      backendConnected = TestBackendConnection();
+      // Check if running in Strategy Tester
+      if(MQLInfoInteger(MQL_TESTER))
+      {
+         if(InpSimulateBackendInTester)
+         {
+            Print("Strategy Tester detected - Using simulated backend AI");
+            backendConnected = SimulateBackendConnection();
+         }
+         else
+         {
+            Print("Strategy Tester detected - Backend AI disabled");
+            backendConnected = false;
+         }
+      }
+      else
+      {
+         Print("Live environment - Connecting to real backend");
+         backendConnected = TestBackendConnection();
+      }
+      
       if(backendConnected)
       {
          Print("Backend AI connection established successfully");
@@ -124,7 +144,8 @@ int OnInit()
       else
       {
          Print("Warning: Backend AI connection failed. Using default parameters.");
-         Print("Error: ", lastBackendError);
+         if(!MQLInfoInteger(MQL_TESTER))
+            Print("Error: ", lastBackendError);
       }
    }
    
@@ -188,6 +209,113 @@ void OnTick()
 }
 
 //+------------------------------------------------------------------+
+//| Simulate backend connection for Strategy Tester                 |
+//+------------------------------------------------------------------+
+bool SimulateBackendConnection()
+{
+   Print("Simulating backend AI connection for Strategy Tester");
+   
+   // Set simulated AI parameters based on market conditions
+   currentRecommendation.spikeThreshold = 45.0;
+   currentRecommendation.cooldownSeconds = 450;
+   currentRecommendation.stopLossPips = 18.0;
+   currentRecommendation.takeProfitPips = 42.0;
+   currentRecommendation.riskScore = 6.5;
+   currentRecommendation.confidence = 75.0;
+   currentRecommendation.marketTrend = "Simulated - Conservative";
+   currentRecommendation.reasoning = "Using simulated AI parameters for backtesting";
+   currentRecommendation.timestamp = TimeCurrent();
+   
+   Print("Simulated AI Parameters:");
+   Print("  Spike Threshold: ", DoubleToString(currentRecommendation.spikeThreshold, 2));
+   Print("  Cooldown: ", IntegerToString(currentRecommendation.cooldownSeconds), "s");
+   Print("  Stop Loss: ", DoubleToString(currentRecommendation.stopLossPips, 2), " pips");
+   Print("  Take Profit: ", DoubleToString(currentRecommendation.takeProfitPips, 2), " pips");
+   Print("  Risk Score: ", DoubleToString(currentRecommendation.riskScore, 1));
+   Print("  Confidence: ", DoubleToString(currentRecommendation.confidence, 1), "%");
+   
+   return true;
+}
+
+//+------------------------------------------------------------------+
+//| Update simulated parameters based on market conditions           |
+//+------------------------------------------------------------------+
+void UpdateSimulatedParameters()
+{
+   // Simulate dynamic parameter updates based on market volatility
+   double currentVolatility = GetCurrentVolatility();
+   
+   // Adjust parameters based on volatility
+   if(currentVolatility > 0.5)
+   {
+      // High volatility - more conservative
+      currentRecommendation.spikeThreshold = 55.0;
+      currentRecommendation.cooldownSeconds = 600;
+      currentRecommendation.stopLossPips = 25.0;
+      currentRecommendation.takeProfitPips = 50.0;
+      currentRecommendation.riskScore = 8.0;
+      currentRecommendation.confidence = 65.0;
+      currentRecommendation.marketTrend = "Simulated - High Volatility";
+   }
+   else if(currentVolatility < 0.2)
+   {
+      // Low volatility - more aggressive
+      currentRecommendation.spikeThreshold = 35.0;
+      currentRecommendation.cooldownSeconds = 300;
+      currentRecommendation.stopLossPips = 15.0;
+      currentRecommendation.takeProfitPips = 35.0;
+      currentRecommendation.riskScore = 4.0;
+      currentRecommendation.confidence = 85.0;
+      currentRecommendation.marketTrend = "Simulated - Low Volatility";
+   }
+   else
+   {
+      // Normal volatility - balanced
+      currentRecommendation.spikeThreshold = 45.0;
+      currentRecommendation.cooldownSeconds = 450;
+      currentRecommendation.stopLossPips = 18.0;
+      currentRecommendation.takeProfitPips = 42.0;
+      currentRecommendation.riskScore = 6.5;
+      currentRecommendation.confidence = 75.0;
+      currentRecommendation.marketTrend = "Simulated - Normal Volatility";
+   }
+   
+   currentRecommendation.reasoning = "Simulated AI analysis based on market volatility";
+   currentRecommendation.timestamp = TimeCurrent();
+   
+   Print("Updated Simulated AI Parameters:");
+   Print("  Volatility: ", DoubleToString(currentVolatility, 3));
+   Print("  Spike Threshold: ", DoubleToString(currentRecommendation.spikeThreshold, 2));
+   Print("  Cooldown: ", IntegerToString(currentRecommendation.cooldownSeconds), "s");
+   Print("  Market Trend: ", currentRecommendation.marketTrend);
+}
+
+//+------------------------------------------------------------------+
+//| Get current market volatility                                    |
+//+------------------------------------------------------------------+
+double GetCurrentVolatility()
+{
+   // Simple volatility calculation based on recent price movements
+   double close[];
+   ArraySetAsSeries(close, true);
+   
+   if(CopyClose(_Symbol, PERIOD_M1, 0, 20, close) < 20)
+      return 0.5; // Default moderate volatility
+   
+   double sum = 0;
+   for(int i = 1; i < 20; i++)
+   {
+      sum += MathAbs(close[i-1] - close[i]);
+   }
+   
+   double avgMovement = sum / 19;
+   double currentPrice = close[0];
+   
+   // Normalize volatility (0-1 scale)
+   return MathMin(avgMovement / currentPrice * 1000, 1.0);
+}
+
+//+------------------------------------------------------------------+
 //| Test backend connection                                          |
 //+------------------------------------------------------------------+
 bool TestBackendConnection()
@@ -225,6 +353,14 @@ void RequestBackendAnalysis()
    if(!InpUseBackendAI || !backendConnected)
       return;
    
+   // If in tester mode and simulation is enabled, update simulated parameters
+   if(MQLInfoInteger(MQL_TESTER) && InpSimulateBackendInTester)
+   {
+      UpdateSimulatedParameters();
+      lastAnalysisTime = TimeCurrent();
+      return;
+   }
+   
    //--- Collect recent price data
    string priceData = CollectPriceData();
    if(StringLen(priceData) == 0)
@@ -247,7 +383,7 @@ void RequestBackendAnalysis()
    Print("Sending analysis request to: ", url);
    Print("Request data: ", requestData);
    
-   int res = WebRequest("POST", url, headers, 10000, post, result, response);
+   int res = WebRequest("POST", url, headers, 5000, post, result, response);
    
    Print("Analysis WebRequest result: ", res);
    
@@ -270,6 +406,22 @@ void RequestBackendAnalysis()
    {
       lastBackendError = "HTTP " + IntegerToString(res);
       Print("Backend analysis failed: ", lastBackendError);
+      
+      // If server error (500), try to use cached or default parameters
+      if(res >= 500)
+      {
+         Print("Server error detected - using fallback parameters");
+         // Set conservative default parameters
+         currentRecommendation.spikeThreshold = InpSpikeThreshold;
+         currentRecommendation.cooldownSeconds = InpCooldownPeriod;
+         currentRecommendation.stopLossPips = InpStopLoss;
+         currentRecommendation.takeProfitPips = InpTakeProfit;
+         currentRecommendation.riskScore = 7.0;
+         currentRecommendation.confidence = 60.0;
+         currentRecommendation.marketTrend = "Fallback - Server Error";
+         currentRecommendation.reasoning = "Using fallback parameters due to server error";
+         currentRecommendation.timestamp = TimeCurrent();
+      }
    }
 }
 
@@ -278,8 +430,8 @@ void RequestBackendAnalysis()
 //+------------------------------------------------------------------+
 string CollectPriceData()
 {
-   //--- Get last 1000 price points (about 16 hours of M1 data)
-   int bars = 1000;
+   //--- Get last 200 price points (about 3 hours of M1 data) - reduced for better performance
+   int bars = 200;
    double close[], high[], low[], open[];
    datetime time[];
    string priceData = "";
