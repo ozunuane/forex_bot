@@ -383,9 +383,18 @@ void RequestBackendAnalysis()
    Print("Sending analysis request to: ", url);
    Print("Request data: ", requestData);
    
-   int res = WebRequest("POST", url, headers, 5000, post, result, response);
+   int res = WebRequest("POST", url, headers, 3000, post, result, response);
    
    Print("Analysis WebRequest result: ", res);
+   
+   // Retry once if we get a server error (500, 502, 503, 504)
+   if(res >= 500 && res <= 504)
+   {
+      Print("Server error (HTTP ", res, "), retrying once...");
+      Sleep(1000); // Wait 1 second before retry
+      res = WebRequest("POST", url, headers, 3000, post, result, response);
+      Print("Retry WebRequest result: ", res);
+   }
    
    if(res == 200)
    {
@@ -407,10 +416,10 @@ void RequestBackendAnalysis()
       lastBackendError = "HTTP " + IntegerToString(res);
       Print("Backend analysis failed: ", lastBackendError);
       
-      // If server error (500), try to use cached or default parameters
+      // If server error (500, 502, 503, 504), try to use cached or default parameters
       if(res >= 500)
       {
-         Print("Server error detected - using fallback parameters");
+         Print("Server error detected (HTTP ", res, ") - using fallback parameters");
          // Set conservative default parameters
          currentRecommendation.spikeThreshold = InpSpikeThreshold;
          currentRecommendation.cooldownSeconds = InpCooldownPeriod;
@@ -419,7 +428,7 @@ void RequestBackendAnalysis()
          currentRecommendation.riskScore = 7.0;
          currentRecommendation.confidence = 60.0;
          currentRecommendation.marketTrend = "Fallback - Server Error";
-         currentRecommendation.reasoning = "Using fallback parameters due to server error";
+         currentRecommendation.reasoning = "Using fallback parameters due to server error (HTTP " + IntegerToString(res) + ")";
          currentRecommendation.timestamp = TimeCurrent();
       }
    }
