@@ -15,10 +15,10 @@
 
 //--- Input parameters
 input group "=== BACKEND CONNECTION ==="
-input string   InpBackendURL = "http://localhost:5001";     // Backend Server URL
-input int      InpBackendTimeout = 10;                      // Request timeout (seconds)
+input string   InpBackendURL = "https://forex-bot-ffiu.onrender.com";     // Backend Server URL
+input int      InpBackendTimeout = 15;                      // Request timeout (seconds)
 input bool     InpUseBackendAI = true;                      // Use Backend AI Analysis
-input int      InpAnalysisInterval = 3600;                  // Analysis interval (seconds)
+input int      InpAnalysisInterval = 1800;                  // Analysis interval (seconds)
 
 input group "=== TRADING PARAMETERS ==="
 input double   InpLotSize = 0.01;                           // Lot Size

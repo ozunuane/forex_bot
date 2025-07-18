@@ -1,0 +1,108 @@
+MT5 EA Production Configuration Guide
+=====================================
+
+🌐 PRODUCTION BACKEND URL: https://forex-bot-ffiu.onrender.com
+
+📋 SETUP INSTRUCTIONS:
+======================
+
+1. COMPILE THE EA:
+   - Open MetaEditor in MT5
+   - Open CrashBoomScalper_Backend.mq5
+   - Click "Compile" (F7)
+   - Ensure no compilation errors
+
+2. ATTACH TO CHART:
+   - Drag the compiled EA to a CRASH_1000 or BOOM_1000 chart
+   - Set timeframe to M1 (1 minute)
+
+3. CONFIGURE PARAMETERS:
+   =====================
+   
+   BACKEND CONNECTION:
+   - Backend Server URL: https://forex-bot-ffiu.onrender.com
+   - Request timeout: 15 seconds
+   - Use Backend AI: true
+   - Analysis interval: 1800 seconds (30 minutes)
+   
+   TRADING PARAMETERS:
+   - Lot Size: 0.01 (adjust based on your account)
+   - Magic Number: 12345
+   - Spike Threshold: 50.0 pips
+   - Cooldown Period: 300 seconds
+   - Stop Loss: 20.0 pips
+   - Take Profit: 40.0 pips
+   - Maximum Open Trades: 1
+   - Trailing Stop: 10.0 pips
+   
+   RISK MANAGEMENT:
+   - Maximum Daily Loss: $100.0
+   - Maximum Daily Profit: $500.0
+   - Maximum Spread: 50.0 points
+   
+   TECHNICAL INDICATORS:
+   - Use RSI Filter: true
+   - RSI Period: 14
+   - RSI Overbought: 70.0
+   - RSI Oversold: 30.0
+   - Use EMA Trend Filter: true
+   - EMA Period: 20
+   
+   TIME FILTER:
+   - Use Time Filter: false (or set to true with your preferred hours)
+
+4. ENABLE AUTOMATIC TRADING:
+   - Click the "AutoTrading" button in MT5 toolbar
+   - Ensure the EA shows a green smiley face
+
+5. MONITOR THE EA:
+   - Check the "Experts" tab for logs
+   - Monitor "Journal" tab for backend communication
+   - Watch for successful analysis requests
+
+🔧 TROUBLESHOOTING:
+===================
+
+If the EA doesn't connect to backend:
+1. Check internet connection
+2. Verify the URL is correct
+3. Check if the backend server is running
+4. Look for error messages in the Journal tab
+
+If trades aren't being placed:
+1. Check if AutoTrading is enabled
+2. Verify account has sufficient balance
+3. Check if symbol is tradeable
+4. Review risk management settings
+
+📊 MONITORING ENDPOINTS:
+========================
+
+You can monitor your backend server at:
+- Health Check: https://forex-bot-ffiu.onrender.com/health
+- Statistics: https://forex-bot-ffiu.onrender.com/stats
+- Manual Analysis: POST to https://forex-bot-ffiu.onrender.com/analyze
+
+🎯 EXPECTED BEHAVIOR:
+=====================
+
+1. EA will connect to backend on startup
+2. Analysis requests every 30 minutes
+3. Trading decisions based on AI recommendations
+4. Automatic risk management
+5. Logs showing backend communication
+
+⚠️ IMPORTANT NOTES:
+===================
+
+- Start with small lot sizes for testing
+- Monitor the EA closely during initial runs
+- The backend provides conservative default parameters
+- Consider adding your OpenAI API key for enhanced analysis
+- Always test on demo account first
+
+🚀 READY TO TRADE:
+==================
+
+Your MT5 EA is now configured to use the production AI backend!
+The system will automatically analyze market data and make trading decisions. 
