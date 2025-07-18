@@ -67,7 +67,7 @@ class SpikeAnalyzer:
         self.min_spike_size = 50  # pips
         self.spike_threshold_percent = 1.0
         
-    def detect_spikes(self, price_data: List[Dict]) -> List[Dict]:
+    def detect_spikes(self, price_data: List[float]) -> List[Dict]:
         """Detect spikes in price data"""
         spikes = []
         
@@ -75,23 +75,23 @@ class SpikeAnalyzer:
             return spikes
             
         for i in range(1, len(price_data) - 1):
-            current = price_data[i]
-            prev = price_data[i-1]
+            current_price = price_data[i]
+            prev_price = price_data[i-1]
             next_price = price_data[i+1]
             
             # Calculate price changes
-            change_to_current = abs(current['close'] - prev['close'])
-            change_from_current = abs(next_price['close'] - current['close'])
+            change_to_current = abs(current_price - prev_price)
+            change_from_current = abs(next_price - current_price)
             
             # Detect spike (sudden large movement followed by reversal)
             if (change_to_current > self.min_spike_size and 
                 change_from_current > change_to_current * 0.5):
                 
                 spike = {
-                    'timestamp': current['timestamp'],
-                    'price': current['close'],
+                    'timestamp': datetime.now().isoformat(),
+                    'price': current_price,
                     'spike_size': change_to_current,
-                    'is_crash': current['close'] < prev['close'],
+                    'is_crash': current_price < prev_price,
                     'recovery_time': self._calculate_recovery_time(price_data, i),
                     'max_retracement': self._calculate_max_retracement(price_data, i)
                 }
@@ -99,24 +99,23 @@ class SpikeAnalyzer:
                 
         return spikes
     
-    def _calculate_recovery_time(self, price_data: List[Dict], spike_index: int) -> int:
+    def _calculate_recovery_time(self, price_data: List[float], spike_index: int) -> int:
         """Calculate time to recover from spike"""
-        spike_price = price_data[spike_index]['close']
-        spike_time = price_data[spike_index]['timestamp']
+        spike_price = price_data[spike_index]
         
         for i in range(spike_index + 1, min(spike_index + 100, len(price_data))):
-            if abs(price_data[i]['close'] - spike_price) < self.min_spike_size * 0.1:
-                return int((price_data[i]['timestamp'] - spike_time).total_seconds())
+            if abs(price_data[i] - spike_price) < self.min_spike_size * 0.1:
+                return 60  # Default 1 minute recovery time
         
         return 300  # Default 5 minutes if no recovery detected
     
-    def _calculate_max_retracement(self, price_data: List[Dict], spike_index: int) -> float:
+    def _calculate_max_retracement(self, price_data: List[float], spike_index: int) -> float:
         """Calculate maximum retracement after spike"""
-        spike_price = price_data[spike_index]['close']
+        spike_price = price_data[spike_index]
         max_retracement = 0
         
         for i in range(spike_index + 1, min(spike_index + 50, len(price_data))):
-            retracement = abs(price_data[i]['close'] - spike_price)
+            retracement = abs(price_data[i] - spike_price)
             max_retracement = max(max_retracement, retracement)
             
         return max_retracement
@@ -303,7 +302,7 @@ def analyze_market():
         # Prepare market data
         market_data = {
             'symbol': symbol,
-            'current_price': price_data[-1]['close'] if price_data else 0,
+            'current_price': price_data[-1] if price_data else 0,
             'spread': data.get('spread', 0),
             'volatility': data.get('volatility', 0)
         }
