@@ -197,8 +197,6 @@ bool TestBackendConnection()
    string headers = "Content-Type: application/json\r\n";
    string response;
    
-   StringToCharArray(headers, post);
-   
    int res = WebRequest("GET", url, headers, InpBackendTimeout * 1000, post, result, response);
    
    if(res == 200)
@@ -229,8 +227,7 @@ void RequestBackendAnalysis()
    //--- Prepare request data
    string requestData = "{";
    requestData += "\"symbol\":\"" + _Symbol + "\",";
-   requestData += "\"prices\":" + priceData + ",";
-   requestData += "\"timeframe\":\"1m\"";
+   requestData += "\"price_data\":" + priceData;
    requestData += "}";
    
    //--- Send request to backend
@@ -239,7 +236,7 @@ void RequestBackendAnalysis()
    string headers = "Content-Type: application/json\r\n";
    string response;
    
-   StringToCharArray(headers + requestData, post);
+   StringToCharArray(requestData, post);
    
    int res = WebRequest("POST", url, headers, InpBackendTimeout * 1000, post, result, response);
    
@@ -274,6 +271,7 @@ string CollectPriceData()
    int bars = 1000;
    double close[], high[], low[], open[];
    datetime time[];
+   string priceData = "";
    
    ArraySetAsSeries(close, true);
    ArraySetAsSeries(high, true);
