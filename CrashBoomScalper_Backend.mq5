@@ -194,10 +194,15 @@ bool TestBackendConnection()
 {
    string url = InpBackendURL + "/health";
    uchar post[], result[];
-   string headers = "Content-Type: application/json\r\n";
+   string headers = "";
    string response;
    
-   int res = WebRequest("GET", url, headers, InpBackendTimeout * 1000, post, result, response);
+   Print("Testing backend connection to: ", url);
+   
+   int res = WebRequest("GET", url, headers, 10000, post, result, response);
+   
+   Print("WebRequest result: ", res);
+   Print("Response: ", response);
    
    if(res == 200)
    {
@@ -207,6 +212,7 @@ bool TestBackendConnection()
    else
    {
       lastBackendError = "HTTP " + IntegerToString(res);
+      Print("Backend connection failed: ", lastBackendError);
       return false;
    }
 }
@@ -238,7 +244,12 @@ void RequestBackendAnalysis()
    
    StringToCharArray(requestData, post);
    
-   int res = WebRequest("POST", url, headers, InpBackendTimeout * 1000, post, result, response);
+   Print("Sending analysis request to: ", url);
+   Print("Request data: ", requestData);
+   
+   int res = WebRequest("POST", url, headers, 10000, post, result, response);
+   
+   Print("Analysis WebRequest result: ", res);
    
    if(res == 200)
    {
