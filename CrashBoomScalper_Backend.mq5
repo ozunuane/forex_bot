@@ -450,8 +450,8 @@ void RequestBackendAnalysis()
 //+------------------------------------------------------------------+
 string CollectPriceData()
 {
-   //--- Get last 20 price points (about 20 minutes of M1 data) - very minimal for Render free tier
-   int bars = 20;
+   //--- Get last 10 price points (about 10 minutes of M1 data) - ultra minimal for Render free tier
+   int bars = 10;
    double close[], high[], low[], open[];
    datetime time[];
    string priceData = "";
