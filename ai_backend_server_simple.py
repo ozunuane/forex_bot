@@ -289,7 +289,28 @@ def health_check():
 def analyze_market():
     """Analyze market data and provide recommendations"""
     try:
-        data = request.get_json()
+        # Debug: Log request details
+        logger.info(f"Request method: {request.method}")
+        logger.info(f"Request headers: {dict(request.headers)}")
+        logger.info(f"Request content type: {request.content_type}")
+        logger.info(f"Request content length: {request.content_length}")
+        
+        # Try to get raw data first
+        raw_data = request.get_data()
+        logger.info(f"Raw request data: {raw_data[:200]}...")  # First 200 chars
+        
+        # Try to parse JSON
+        try:
+            data = request.get_json()
+            logger.info(f"Parsed JSON data: {data}")
+        except Exception as json_error:
+            logger.error(f"JSON parsing failed: {json_error}")
+            logger.error(f"Raw data that failed to parse: {raw_data}")
+            return jsonify({
+                'success': False,
+                'error': f'Invalid JSON: {str(json_error)}'
+            }), 400
+        
         symbol = data.get('symbol', 'CRASH_1000')
         price_data = data.get('price_data', [])
         
