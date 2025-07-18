@@ -369,7 +369,7 @@ void RequestBackendAnalysis()
    //--- Prepare request data with proper JSON escaping
    string requestData = "{";
    requestData += "\"symbol\":\"";
-   requestData += StringReplace(_Symbol, "\"", "\\\""); // Escape quotes
+   requestData += _Symbol; // Use symbol directly (no quotes in symbol names)
    requestData += "\",";
    requestData += "\"price_data\":";
    requestData += priceData;
