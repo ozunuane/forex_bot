@@ -1,0 +1,238 @@
+;+------------------------------------------------------------------+
+;|                                    CrashBoomScalper Settings    |
+;|                           Optimized configurations for different|
+;|                           Crash & Boom market conditions        |
+;+------------------------------------------------------------------+
+
+; === CONSERVATIVE SETTINGS (Safe for beginners) ===
+[CONSERVATIVE]
+InpLotSize=0.01
+InpMagicNumber=123456
+InpMaxSpread=30
+InpSpikeCandles=5
+InpSpikeThreshold=2.0
+InpMinSpikePips=150
+InpCooldownPeriod=600
+InpStopLoss=25.0
+InpTakeProfit=20.0
+InpTrailingStop=15.0
+InpUseTrailingStop=true
+InpMaxTrades=3
+InpMaxDailyLoss=50.0
+InpMaxDailyProfit=100.0
+InpUseTimeFilter=true
+InpStartHour=8
+InpEndHour=20
+InpRSIPeriod=14
+InpRSIOverBought=75.0
+InpRSIOverSold=25.0
+InpUseRSIFilter=true
+InpEMAPeriod=21
+InpUseTrendFilter=true
+
+; === AGGRESSIVE SETTINGS (For experienced traders) ===
+[AGGRESSIVE]
+InpLotSize=0.05
+InpMagicNumber=123457
+InpMaxSpread=50
+InpSpikeCandles=3
+InpSpikeThreshold=1.2
+InpMinSpikePips=80
+InpCooldownPeriod=180
+InpStopLoss=15.0
+InpTakeProfit=12.0
+InpTrailingStop=8.0
+InpUseTrailingStop=true
+InpMaxTrades=8
+InpMaxDailyLoss=200.0
+InpMaxDailyProfit=400.0
+InpUseTimeFilter=true
+InpStartHour=6
+InpEndHour=22
+InpRSIPeriod=9
+InpRSIOverBought=70.0
+InpRSIOverSold=30.0
+InpUseRSIFilter=true
+InpEMAPeriod=13
+InpUseTrendFilter=false
+
+; === CRASH 1000 OPTIMIZED ===
+[CRASH_1000]
+InpLotSize=0.02
+InpMagicNumber=123458
+InpMaxSpread=40
+InpSpikeCandles=4
+InpSpikeThreshold=1.8
+InpMinSpikePips=120
+InpCooldownPeriod=300
+InpStopLoss=20.0
+InpTakeProfit=15.0
+InpTrailingStop=10.0
+InpUseTrailingStop=true
+InpMaxTrades=5
+InpMaxDailyLoss=100.0
+InpMaxDailyProfit=200.0
+InpUseTimeFilter=true
+InpStartHour=8
+InpEndHour=20
+InpRSIPeriod=14
+InpRSIOverBought=70.0
+InpRSIOverSold=30.0
+InpUseRSIFilter=true
+InpEMAPeriod=21
+InpUseTrendFilter=true
+
+; === BOOM 1000 OPTIMIZED ===
+[BOOM_1000]
+InpLotSize=0.02
+InpMagicNumber=123459
+InpMaxSpread=40
+InpSpikeCandles=4
+InpSpikeThreshold=1.6
+InpMinSpikePips=100
+InpCooldownPeriod=240
+InpStopLoss=18.0
+InpTakeProfit=14.0
+InpTrailingStop=9.0
+InpUseTrailingStop=true
+InpMaxTrades=6
+InpMaxDailyLoss=120.0
+InpMaxDailyProfit=240.0
+InpUseTimeFilter=true
+InpStartHour=7
+InpEndHour=21
+InpRSIPeriod=12
+InpRSIOverBought=72.0
+InpRSIOverSold=28.0
+InpUseRSIFilter=true
+InpEMAPeriod=18
+InpUseTrendFilter=true
+
+; === HIGH VOLATILITY SETTINGS ===
+[HIGH_VOLATILITY]
+InpLotSize=0.01
+InpMagicNumber=123460
+InpMaxSpread=60
+InpSpikeCandles=6
+InpSpikeThreshold=2.5
+InpMinSpikePips=200
+InpCooldownPeriod=450
+InpStopLoss=30.0
+InpTakeProfit=25.0
+InpTrailingStop=18.0
+InpUseTrailingStop=true
+InpMaxTrades=4
+InpMaxDailyLoss=80.0
+InpMaxDailyProfit=160.0
+InpUseTimeFilter=true
+InpStartHour=9
+InpEndHour=19
+InpRSIPeriod=16
+InpRSIOverBought=78.0
+InpRSIOverSold=22.0
+InpUseRSIFilter=true
+InpEMAPeriod=26
+InpUseTrendFilter=true
+
+; === LOW VOLATILITY SETTINGS ===
+[LOW_VOLATILITY]
+InpLotSize=0.03
+InpMagicNumber=123461
+InpMaxSpread=25
+InpSpikeCandles=3
+InpSpikeThreshold=1.0
+InpMinSpikePips=60
+InpCooldownPeriod=120
+InpStopLoss=12.0
+InpTakeProfit=10.0
+InpTrailingStop=6.0
+InpUseTrailingStop=true
+InpMaxTrades=10
+InpMaxDailyLoss=150.0
+InpMaxDailyProfit=300.0
+InpUseTimeFilter=false
+InpStartHour=0
+InpEndHour=24
+InpRSIPeriod=10
+InpRSIOverBought=65.0
+InpRSIOverSold=35.0
+InpUseRSIFilter=false
+InpEMAPeriod=15
+InpUseTrendFilter=false
+
+; === SCALPING TURBO (Ultra-fast) ===
+[TURBO_SCALPING]
+InpLotSize=0.02
+InpMagicNumber=123462
+InpMaxSpread=35
+InpSpikeCandles=2
+InpSpikeThreshold=0.8
+InpMinSpikePips=50
+InpCooldownPeriod=60
+InpStopLoss=8.0
+InpTakeProfit=6.0
+InpTrailingStop=4.0
+InpUseTrailingStop=false
+InpMaxTrades=15
+InpMaxDailyLoss=100.0
+InpMaxDailyProfit=200.0
+InpUseTimeFilter=true
+InpStartHour=8
+InpEndHour=18
+InpRSIPeriod=7
+InpRSIOverBought=65.0
+InpRSIOverSold=35.0
+InpUseRSIFilter=false
+InpEMAPeriod=9
+InpUseTrendFilter=false
+
+; === NEWS TRADING (High impact events) ===
+[NEWS_TRADING]
+InpLotSize=0.01
+InpMagicNumber=123463
+InpMaxSpread=80
+InpSpikeCandles=7
+InpSpikeThreshold=3.0
+InpMinSpikePips=300
+InpCooldownPeriod=900
+InpStopLoss=40.0
+InpTakeProfit=35.0
+InpTrailingStop=25.0
+InpUseTrailingStop=true
+InpMaxTrades=2
+InpMaxDailyLoss=60.0
+InpMaxDailyProfit=120.0
+InpUseTimeFilter=true
+InpStartHour=12
+InpEndHour=16
+InpRSIPeriod=20
+InpRSIOverBought=80.0
+InpRSIOverSold=20.0
+InpUseRSIFilter=true
+InpEMAPeriod=30
+InpUseTrendFilter=true
+
+;+------------------------------------------------------------------+
+;| USAGE INSTRUCTIONS:                                              |
+;| 1. Choose the setting profile that matches your trading style   |
+;| 2. Copy the parameters to your EA inputs                        |
+;| 3. Backtest thoroughly before live trading                      |
+;| 4. Monitor performance and adjust as needed                     |
+;| 5. Always start with demo account                               |
+;+------------------------------------------------------------------+
+
+;+------------------------------------------------------------------+
+;| RECOMMENDED TIMEFRAMES:                                          |
+;| - M1: For turbo scalping and high-frequency trading             |
+;| - M5: For standard scalping operations                          |
+;| - M15: For swing-style spike trading                            |
+;| - H1: For trend-following spike strategies                      |
+;+------------------------------------------------------------------+
+
+;+------------------------------------------------------------------+
+;| RISK WARNING:                                                    |
+;| Crash and Boom indices are highly volatile synthetic instruments|
+;| Always use proper risk management and never risk more than you  |
+;| can afford to lose. Past performance does not guarantee future  |
+;| results. Test thoroughly on demo before going live.             |
+;+------------------------------------------------------------------+ 

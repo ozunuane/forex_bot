@@ -1,0 +1,41 @@
+2025-07-18 02:56:28,053 - __main__ - INFO - Starting AI Backend Server on 0.0.0.0:5000
+2025-07-18 02:56:28,053 - __main__ - INFO - OpenAI Model: gpt-4
+2025-07-18 02:56:28,053 - __main__ - WARNING - Please set OPENAI_API_KEY environment variable
+2025-07-18 02:56:44,406 - __main__ - INFO - Starting AI Backend Server on 0.0.0.0:5000
+2025-07-18 02:56:44,407 - __main__ - INFO - OpenAI Model: gpt-4
+2025-07-18 02:56:44,407 - __main__ - WARNING - Please set OPENAI_API_KEY environment variable
+2025-07-18 02:57:13,059 - __main__ - INFO - Starting AI Backend Server on 0.0.0.0:5000
+2025-07-18 02:57:13,060 - __main__ - INFO - OpenAI Model: gpt-4
+2025-07-18 02:57:13,060 - __main__ - WARNING - Please set OPENAI_API_KEY environment variable
+2025-07-18 02:57:19,158 - __main__ - INFO - Starting AI Backend Server on 0.0.0.0:5001
+2025-07-18 02:57:19,158 - __main__ - INFO - OpenAI Model: gpt-4
+2025-07-18 02:57:19,158 - __main__ - WARNING - Please set OPENAI_API_KEY environment variable
+2025-07-18 02:57:19,364 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.4:5001
+2025-07-18 02:57:19,365 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-07-18 02:57:25,769 - werkzeug - INFO - 127.0.0.1 - - [18/Jul/2025 02:57:25] "GET /health HTTP/1.1" 200 -
+2025-07-18 02:57:43,064 - werkzeug - INFO - 127.0.0.1 - - [18/Jul/2025 02:57:43] "GET /health HTTP/1.1" 200 -
+2025-07-18 02:57:43,069 - werkzeug - INFO - 127.0.0.1 - - [18/Jul/2025 02:57:43] "GET /stats HTTP/1.1" 200 -
+2025-07-18 02:57:43,074 - __main__ - INFO - Received analysis request for CRASH_1000 with 100 price points
+2025-07-18 02:57:43,074 - __main__ - INFO - Detected 0 spikes
+2025-07-18 02:57:43,075 - __main__ - INFO - Analysis completed for CRASH_1000
+2025-07-18 02:57:43,075 - werkzeug - INFO - 127.0.0.1 - - [18/Jul/2025 02:57:43] "POST /analyze HTTP/1.1" 200 -
+2025-07-18 02:57:43,080 - werkzeug - INFO - 127.0.0.1 - - [18/Jul/2025 02:57:43] "GET /recommendations/CRASH_1000 HTTP/1.1" 200 -
+2025-07-18 02:57:43,083 - __main__ - INFO - Received analysis request for CRASH_1000 with 2 price points
+2025-07-18 02:57:43,083 - __main__ - INFO - Detected 0 spikes
+2025-07-18 02:57:43,083 - __main__ - INFO - Analysis completed for CRASH_1000
+2025-07-18 02:57:43,083 - werkzeug - INFO - 127.0.0.1 - - [18/Jul/2025 02:57:43] "POST /analyze HTTP/1.1" 200 -
+2025-07-18 02:58:19,634 - __main__ - INFO - Received analysis request for CRASH_1000 with 1000 price points
+2025-07-18 02:58:19,636 - __main__ - INFO - Detected 0 spikes
+2025-07-18 02:58:19,637 - __main__ - INFO - Analysis completed for CRASH_1000
+2025-07-18 02:58:19,642 - werkzeug - INFO - 127.0.0.1 - - [18/Jul/2025 02:58:19] "POST /analyze HTTP/1.1" 200 -
+2025-07-18 02:58:19,649 - werkzeug - INFO - 127.0.0.1 - - [18/Jul/2025 02:58:19] "GET /stats HTTP/1.1" 200 -
+2025-07-18 03:01:34,182 - werkzeug - INFO - 127.0.0.1 - - [18/Jul/2025 03:01:34] "GET /health HTTP/1.1" 200 -
+2025-07-18 03:02:27,433 - __main__ - INFO - Received analysis request for CRASH_1000 with 1000 price points
+2025-07-18 03:02:27,434 - __main__ - INFO - Detected 0 spikes
+2025-07-18 03:02:27,434 - __main__ - INFO - Analysis completed for CRASH_1000
+2025-07-18 03:02:27,435 - werkzeug - INFO - 127.0.0.1 - - [18/Jul/2025 03:02:27] "POST /analyze HTTP/1.1" 200 -
+2025-07-18 03:02:27,440 - werkzeug - INFO - 127.0.0.1 - - [18/Jul/2025 03:02:27] "GET /stats HTTP/1.1" 200 -
+2025-07-18 03:02:40,588 - werkzeug - INFO - 127.0.0.1 - - [18/Jul/2025 03:02:40] "GET /stats HTTP/1.1" 200 -
