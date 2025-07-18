@@ -430,8 +430,8 @@ void RequestBackendAnalysis()
 //+------------------------------------------------------------------+
 string CollectPriceData()
 {
-   //--- Get last 200 price points (about 3 hours of M1 data) - reduced for better performance
-   int bars = 200;
+   //--- Get last 50 price points (about 50 minutes of M1 data) - minimal for better performance
+   int bars = 50;
    double close[], high[], low[], open[];
    datetime time[];
    string priceData = "";
