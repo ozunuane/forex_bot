@@ -366,22 +366,33 @@ void RequestBackendAnalysis()
    if(StringLen(priceData) == 0)
       return;
    
-   //--- Prepare request data
+   //--- Prepare request data with proper JSON escaping
    string requestData = "{";
-   requestData += "\"symbol\":\"" + _Symbol + "\",";
-   requestData += "\"price_data\":" + priceData;
+   requestData += "\"symbol\":\"";
+   requestData += StringReplace(_Symbol, "\"", "\\\""); // Escape quotes
+   requestData += "\",";
+   requestData += "\"price_data\":";
+   requestData += priceData;
    requestData += "}";
    
    //--- Send request to backend
    string url = InpBackendURL + "/analyze";
    uchar post[], result[];
-   string headers = "Content-Type: application/json\r\n";
+   string headers = "Content-Type: application/json\r\nContent-Length: " + IntegerToString(StringLen(requestData)) + "\r\n";
    string response;
+   
+   // Validate JSON format
+   if(StringLen(requestData) < 10)
+   {
+      Print("Error: Invalid request data length");
+      return;
+   }
    
    StringToCharArray(requestData, post);
    
    Print("Sending analysis request to: ", url);
-   Print("Request data: ", requestData);
+   Print("Request data length: ", StringLen(requestData), " characters");
+   Print("Request data preview: ", StringSubstr(requestData, 0, 100), "...");
    
    int res = WebRequest("POST", url, headers, 3000, post, result, response);
    
