@@ -393,6 +393,7 @@ void RequestBackendAnalysis()
    Print("Sending analysis request to: ", url);
    Print("Request data length: ", StringLen(requestData), " characters");
    Print("Request data preview: ", StringSubstr(requestData, 0, 100), "...");
+   Print("Full request data: ", requestData);
    
    int res = WebRequest("POST", url, headers, 3000, post, result, response);
    
@@ -450,8 +451,8 @@ void RequestBackendAnalysis()
 //+------------------------------------------------------------------+
 string CollectPriceData()
 {
-   //--- Get last 10 price points (about 10 minutes of M1 data) - ultra minimal for Render free tier
-   int bars = 10;
+   //--- Get last 20 price points (about 20 minutes of M1 data) - tested working from terminal
+   int bars = 20;
    double close[], high[], low[], open[];
    datetime time[];
    string priceData = "";
