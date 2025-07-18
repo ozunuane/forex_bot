@@ -299,17 +299,28 @@ def analyze_market():
         raw_data = request.get_data()
         logger.info(f"Raw request data: {raw_data[:200]}...")  # First 200 chars
         
+        # Clean the data by removing null terminators and other invalid characters
+        cleaned_data = raw_data.decode('utf-8', errors='ignore').rstrip('\x00')
+        logger.info(f"Cleaned data: {cleaned_data[:200]}...")  # First 200 chars
+        
         # Try to parse JSON
         try:
-            data = request.get_json()
-            logger.info(f"Parsed JSON data: {data}")
+            # First try the cleaned data
+            data = json.loads(cleaned_data)
+            logger.info(f"Parsed JSON data from cleaned data: {data}")
         except Exception as json_error:
-            logger.error(f"JSON parsing failed: {json_error}")
-            logger.error(f"Raw data that failed to parse: {raw_data}")
-            return jsonify({
-                'success': False,
-                'error': f'Invalid JSON: {str(json_error)}'
-            }), 400
+            logger.error(f"JSON parsing failed with cleaned data: {json_error}")
+            # Fallback to Flask's built-in JSON parsing
+            try:
+                data = request.get_json()
+                logger.info(f"Parsed JSON data from Flask: {data}")
+            except Exception as flask_json_error:
+                logger.error(f"Flask JSON parsing also failed: {flask_json_error}")
+                logger.error(f"Raw data that failed to parse: {raw_data}")
+                return jsonify({
+                    'success': False,
+                    'error': f'Invalid JSON: {str(json_error)}'
+                }), 400
         
         symbol = data.get('symbol', 'CRASH_1000')
         price_data = data.get('price_data', [])
@@ -343,13 +354,23 @@ def analyze_market():
         
         logger.info(f"Analysis completed for {symbol}")
         
-        return jsonify({
+        # Return a simplified format that's easier for MQL5 to parse
+        response_data = {
             'success': True,
             'symbol': symbol,
             'spikes_detected': len(spikes),
-            'recommendations': recommendations,
+            'spike_threshold': recommendations['spike_threshold'],
+            'cooldown_seconds': recommendations['cooldown_seconds'],
+            'stop_loss_pips': recommendations['stop_loss_pips'],
+            'take_profit_pips': recommendations['take_profit_pips'],
+            'risk_score': recommendations['risk_score'],
+            'confidence': recommendations['confidence'],
+            'market_trend': recommendations['market_trend'],
+            'reasoning': recommendations['reasoning'],
             'timestamp': datetime.now().isoformat()
-        })
+        }
+        
+        return jsonify(response_data)
         
     except Exception as e:
         logger.error(f"Analysis error: {e}")

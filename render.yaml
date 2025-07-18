@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: forex-bot-backend
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python3 ai_backend_server_simple.py
+    envVars:
+      - key: SERVER_PORT
+        value: $PORT
+      - key: FLASK_ENV
+        value: production
+      - key: OPENAI_API_KEY
+        sync: false # Set this in Render dashboard 
